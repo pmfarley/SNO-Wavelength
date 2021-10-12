@@ -62,7 +62,7 @@ compute:
       - us-east-1-wl1-was-wlz-1
   replicas: 0
 metadata:
-  name: pfarley-sno-wavelength 
+  name: ocp-sno 
 networking:
   clusterNetwork:
   - cidr: 10.128.0.0/14
