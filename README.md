@@ -45,7 +45,7 @@ controlPlane:
   platform:
     aws:
       zones:
-      - us-west-2a
+      - us-east-1-wl1-was-wlz-1
       rootVolume:
         size: 120
       type: r5.2xlarge
@@ -59,7 +59,7 @@ compute:
         size: 120
       type: r5.2xlarge
       zones:
-      - us-west-2a
+      - us-east-1-wl1-was-wlz-1
   replicas: 0
 metadata:
   name: test-cluster 
@@ -75,11 +75,8 @@ networking:
 platform:
   aws:
     region: us-east-1 
-    userTags:
-      adminContact: jdoe
-      costCenter: 7536
     subnets: 
-    - subnet-1
+    - subnet-1  **# Specify the submet **
     amiID: ami-96c6f8f7 
     serviceEndpoints: 
       - name: ec2
@@ -95,6 +92,7 @@ pullSecret: '{"auths": ...}'
   https://console.redhat.com/openshift/install/pull-secret
 
 **a. Click on Download pull secret, and save as filename pull-secret.txt in your current folder.**
+
 **a. Click on the Copy to Clipboard icon to the right of the token.**
 
 
