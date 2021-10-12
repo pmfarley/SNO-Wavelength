@@ -51,7 +51,7 @@ controlPlane:
       type: r5.2xlarge
   replicas: 1
 compute: 
-  hyperthreading: Enabled 
+- hyperthreading: Enabled 
   name: worker
   platform:
     aws:
