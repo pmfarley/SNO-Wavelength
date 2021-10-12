@@ -37,7 +37,7 @@ SAMPLE INSTALL-CONFIG.YAML FILE:
 
 ```bash
 apiVersion: v1
-baseDomain: example.com 
+baseDomain: pfarleydemo.com 
 credentialsMode: Mint 
 controlPlane:   
   hyperthreading: Enabled 
@@ -62,7 +62,7 @@ compute:
       - us-east-1-wl1-was-wlz-1
   replicas: 0
 metadata:
-  name: test-cluster 
+  name: pfarley-sno-wavelength 
 networking:
   clusterNetwork:
   - cidr: 10.128.0.0/14
@@ -76,12 +76,12 @@ platform:
   aws:
     region: us-east-1 
     subnets: 
-    - subnet-1  **# Specify the submet **
-    amiID: ami-96c6f8f7 
-    serviceEndpoints: 
-      - name: ec2
-        url: https://vpce-id.ec2.us-east-1.vpce.amazonaws.com
-    hostedZone: Z3URY6TWQ91KVV 
+    - subnet-0d136b54d2906e7f3  **# Specify the subnet in the existing VPC **
+#    amiID: ami-96c6f8f7 
+#    serviceEndpoints: 
+#      - name: ec2
+#        url: https://vpce-id.ec2.us-east-1.vpce.amazonaws.com
+#    hostedZone: Z3URY6TWQ91KVV 
 fips: false 
 sshKey: ssh-ed25519 AAAA... 
 pullSecret: '{"auths": ...}' 
