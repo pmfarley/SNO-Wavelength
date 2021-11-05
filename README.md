@@ -275,6 +275,7 @@ You will be prompted for your Red Hat ID and password to login.
 
  ![image](https://user-images.githubusercontent.com/48925593/140576887-3764d5fc-b271-4b7e-806a-f79ecde64be8.png)
 
+
 **e. Click on the 'Copy to clipboard' icon to the right of the 'Command to download the ISO'.**
 
 This will be used in a later step from the SNO instance.
@@ -282,16 +283,21 @@ This will be used in a later step from the SNO instance.
  ![image](https://user-images.githubusercontent.com/48925593/140577575-eb0d76e1-6a4d-43a5-8ee8-56c4d4a4e9b6.png)
 
 
+**e. Click 'Close' to return to the previous screen.**
+
+
 ## **STEP 7. BOOT THE SNO INSTANCE FROM THE DISCOVERY ISO:**
 
 AWS EC2 instances are NOT able to boot directly from an ISO image. So, we'll use the following steps to download the Discovery ISO image to the instance.
 Then we'll add an entry to the grub configuration to allow it to boot boot from the image. 
+
 
 **a. SSH into the SNO instance.**
 
 ```bash
 ssh -i <your-sshkeyfile.pem> ec2user@<ip address>
 ```
+
 
 **b. Install wget and download the Discovery Image ISO.**
 
@@ -302,6 +308,7 @@ sudo yum install wget -y
 
 sudo wget -O /var/tmp/discovery-image.iso 'https://<long s3 url provided by AI SaaS>'
 ```
+
 
 **c. Edit the grub configuration.**
 
@@ -322,6 +329,7 @@ menuentry "Discovery Image RHCOS" {
         }
 ```
 
+
 **d. Save the grub configuration, and reboot the SNO instance.**
 
 Execute these commands to generate and save the new menuentry.
@@ -332,3 +340,36 @@ sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 reboot
 ```
 
+
+## **STEP 8. RETURN TO THE ASSISTED INSTALLER TO FINISH THE INSTALLATION:**
+
+Return to the OpenShift Assisted Installer.
+
+ ![image](https://user-images.githubusercontent.com/48925593/140576648-b57c44ee-ada3-457f-88bd-19b64cc34b43.png)
+ 
+ 
+ **a. You should see the SNO instance displayed in the list of discovered servers.**
+
+ **b. From the _Host discovery_ menu, once the SNO instance is discovered, click 'Next'.**
+ 
+ **c. From the _Networking_ menu, select the discovered `network subnet`, and click on _Next_ to proceed.**
+
+![image](https://user-images.githubusercontent.com/48925593/134448546-c1e05bae-cc25-4aca-abc3-c495a0b33b63.png)
+
+
+**c. Review the configuration, and select _Install Cluster_.**
+
+![image](https://user-images.githubusercontent.com/48925593/134448841-69c26016-b744-43a7-bc5c-562b10995da0.png)
+
+
+**d. Monitor the installation progress.**
+
+![image](https://user-images.githubusercontent.com/48925593/134449913-6125dac7-b55b-412a-b03b-3be148ab1126.png)
+
+**e. Installation Complete.**
+
+![image](https://user-images.githubusercontent.com/48925593/134454160-8d191627-4c61-44db-8109-7ff44ae6ff46.png)
+![image](https://user-images.githubusercontent.com/48925593/134454205-e1a78b80-bde5-4fe4-99e7-8ef2c42f13ae.png)
+
+
+ 
