@@ -1,5 +1,5 @@
 # SNO-Wavelength
-Installing Single Node OpenShift (SNO) on AWS into a Wavelength Zone.
+Installing Single Node OpenShift (SNO) on AWS into a Wavelength Zone using the OpenShift Assisted-Installer.
  
   REQUIREMENTS FOR INSTALLING ON A SINGLE NODE:  https://docs.openshift.com/container-platform/4.9/installing/installing_sno/install-sno-preparing-to-install-sno.html
 
@@ -224,7 +224,7 @@ aws ec2 --region $REGION associate-address  --allocation-id $SNO_CIP_ALLOC_ID \
 --network-interface-id $SNO_ENI_ID
 ```
 
-## **STEP 5. DEPLOY THE SNO INSTANCE:**
+## **STEP 5. DEPLOY THE SNO AND BASTION INSTANCEs:**
 
 With the VPC and underlying networking and security deployed, you can now move on to deploying your SNO instance. 
 The SNO server is a g4dn.2xlarge instance and the Bootstrap server is a t3.medium instance; both running RHEL 8.4 AMI. 
@@ -239,10 +239,6 @@ aws ec2 --region $REGION  run-instances  --instance-type g4dn.2xlarge \
 --tag-specifications 'ResourceType=instance,Tags=[{Key="kubernetes.io/cluster/wavelength-sno",Value=shared}]'
 ```
 
-
-## **STEP 6. DEPLOY THE BASTION INSTANCE:**
-
-Next, you'll deploy the Bastion host to allow you to SSH into your SNO instance. 
 Remember that the carrier gateway in a Wavelength Zone only allows ingress from the carrier’s 5G network. 
 This means that in order to SSH into the SNO server, you'll need to first SSH into the Bastion host, and then from there, SSH into your Wavelength SNO instance.
 The Bastion host is a t3.medium instance; running RHEL 8.4 AMI. 
@@ -254,5 +250,36 @@ aws ec2 --region $REGION run-instances  --instance-type t3.medium \
 --associate-public-ip-address --subnet-id $BASTION_SUBNET_ID \
 --image-id $BASTION_IMAGE_ID --security-group-ids $BASTION_SG_ID --key-name $KEY_NAME
 ```
+
+## **STEP 6. OPEN THE ASSISTED INSTALLER SITE:**
+
+Open the OpenShift Assisted Installer website: https://console.redhat.com/openshift/assisted-installer/clusters/. 
+
+**a. Select 'Create cluster'.**
+
+ ![image](https://user-images.githubusercontent.com/48925593/140575947-b4f8e666-637c-451f-b797-d30feff712d3.png)
+
+
+**b. Enter the cluster name, and base domain; select 'Install single node OpenShift (SNO)' and 'OpenShift 4.9.0', and click 'Next'.**
+
+ ![image](https://user-images.githubusercontent.com/48925593/140576426-d4100e81-9726-402b-b264-ae1be8706088.png)
+
+
+**c. Select 'Generate Discovery ISO'.**
+
+ ![image](https://user-images.githubusercontent.com/48925593/140576648-b57c44ee-ada3-457f-88bd-19b64cc34b43.png)
+
+
+**d. Select 'Minimal Image File' and 'Generate Discovery ISO'.**
+
+ ![image](https://user-images.githubusercontent.com/48925593/140576887-3764d5fc-b271-4b7e-806a-f79ecde64be8.png)
+
+**e. Click on the 'Copy to clipboard' icon to the right of the 'Command to download the ISO'.**
+This will be used in a later step from the SNO instance.
+
+ ![image](https://user-images.githubusercontent.com/48925593/140577261-cdb8431d-7bb9-412f-b084-11b1ad376af8.png)
+
+
+
 
 
