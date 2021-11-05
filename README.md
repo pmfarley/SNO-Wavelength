@@ -1,8 +1,6 @@
 # SNO-Wavelength
-Installing Single Node OpenShift (SNO) on AWS into an existing VPC and a Wavelength Zone.
-
-  INSTALLING INTO AN EXISTING VPC ON AWS:  https://docs.openshift.com/container-platform/4.8/installing/installing_aws/installing-aws-vpc.html
-  
+Installing Single Node OpenShift (SNO) on AWS into a Wavelength Zone.
+ 
   REQUIREMENTS FOR INSTALLING ON A SINGLE NODE:  https://docs.openshift.com/container-platform/4.9/installing/installing_sno/install-sno-preparing-to-install-sno.html
 
 
@@ -16,7 +14,19 @@ AWS Wavelength supports the following instances types for edge workloads that me
 - `r5.2xlarge` for applications that need cost effective general purpose compute.
 - `g4dn.2xlarge` for applications that need GPUs, such as game streaming and machine learning (ML) inference at the edge.
 
-You'll also need the AWS CLI installed. https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+r5.2xlarge
+- CPU: 8 vCPUs
+- Memory: 64GB
+
+g4dn.2xlarge
+- GCPU: 1 NVIDIA T4 Tensor Core GPU
+- CPU: 8 vCPUs
+- Memory: 32GB
+- Storage: 225GB NVMe SSD
+
+You'll also need to install the AWS CLI. https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+
+![image](https://user-images.githubusercontent.com/48925593/140574901-4d6f8c39-6ffe-4e6a-87a5-5a9de79b6ab4.png)
 
 
 ## **STEP 1. CREATE THE VPC AND ASSOCIATED RESOURCES:**
