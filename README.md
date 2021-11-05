@@ -243,7 +243,7 @@ Remember that the carrier gateway in a Wavelength Zone only allows ingress from 
 This means that in order to SSH into the SNO server, you'll need to first SSH into the Bastion host, and then from there, SSH into your Wavelength SNO instance.
 The Bastion host is a t3.medium instance; running RHEL 8.4 AMI. 
 
-**a. Deploy the BASTION instance.**
+**b. Deploy the BASTION instance.**
 
 ```bash
 aws ec2 --region $REGION run-instances  --instance-type t3.medium \
@@ -251,9 +251,10 @@ aws ec2 --region $REGION run-instances  --instance-type t3.medium \
 --image-id $BASTION_IMAGE_ID --security-group-ids $BASTION_SG_ID --key-name $KEY_NAME
 ```
 
-## **STEP 6. OPEN THE ASSISTED INSTALLER SITE:**
+## **STEP 6. GENERATE DISCOVERY ISO FROM THE ASSISTED INSTALLER:**
 
 Open the OpenShift Assisted Installer website: https://console.redhat.com/openshift/assisted-installer/clusters/. 
+You will be prompted for your Red Hat ID and password to login.
 
 **a. Select 'Create cluster'.**
 
@@ -275,11 +276,59 @@ Open the OpenShift Assisted Installer website: https://console.redhat.com/opensh
  ![image](https://user-images.githubusercontent.com/48925593/140576887-3764d5fc-b271-4b7e-806a-f79ecde64be8.png)
 
 **e. Click on the 'Copy to clipboard' icon to the right of the 'Command to download the ISO'.**
+
 This will be used in a later step from the SNO instance.
 
- ![image](https://user-images.githubusercontent.com/48925593/140577261-cdb8431d-7bb9-412f-b084-11b1ad376af8.png)
+ ![image](https://user-images.githubusercontent.com/48925593/140577575-eb0d76e1-6a4d-43a5-8ee8-56c4d4a4e9b6.png)
 
 
+## **STEP 7. BOOT THE SNO INSTANCE FROM THE DISCOVERY ISO:**
 
+AWS EC2 instances are able to boot directly from an ISO image, so we'll use the following steps to download it to the instance.
+Then we'll add an entry to the grub configuration to boot from the Discovery ISO image. 
 
+**a. SSH into the SNO instance.**
+
+```bash
+ssh -i <your-sshkeyfile.pem> ec2user@<ip address>
+```
+
+**b. Install wget and download the Discovery Image ISO.**
+
+You'll need the download url provided previously in step 6e.
+
+```bash
+sudo yum install wget -y
+
+sudo wget -O /var/tmp/discovery-image.iso 'https://<long s3 url provided by AI SaaS>'
+```
+
+**c. Edit the grub configuration.**
+
+Edit the 40_custom file.
+
+```bash
+sudo vi /etc/grub.d/40_custom
+```
+Add the following to the end of the file: 
+ 
+```bash
+menuentry "Discovery Image RHCOS" {
+        set root='(hd0,2)'
+        set iso="/var/tmp/discovery-image.iso"
+        loopback loop ${iso}
+        linux (loop)/images/pxeboot/vmlinuz boot=images iso-scan/filename=${iso} persistent noeject noprompt ignition.firstboot ignition.platform.id=metal coreos.live.rootfs_url='https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.9/4.9.0/rhcos-live-rootfs.x86_64.img'
+        initrd (loop)/images/pxeboot/initrd.img (loop)/images/ignition.img (loop)/images/assisted_installer_custom.img
+        }
+```
+
+**d. Save the grub configuration, and reboot the SNO instance.**
+
+Execute these commands to generate and save the new menuentry.
+
+```bash
+sudo grub2-set-default 'Discovery Image RHCOS'
+sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+reboot
+```
 
