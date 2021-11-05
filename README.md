@@ -352,24 +352,28 @@ Return to the OpenShift Assisted Installer.
 
  **b. From the _Host discovery_ menu, once the SNO instance is discovered, click 'Next'.**
  
+  ![image](https://user-images.githubusercontent.com/48925593/140581518-8de32ed2-815d-492d-90ae-996c9926d0f4.png)
+
+ 
+ 
  **c. From the _Networking_ menu, select the discovered `network subnet`, and click on _Next_ to proceed.**
 
-![image](https://user-images.githubusercontent.com/48925593/134448546-c1e05bae-cc25-4aca-abc3-c495a0b33b63.png)
+ ![image](https://user-images.githubusercontent.com/48925593/134448546-c1e05bae-cc25-4aca-abc3-c495a0b33b63.png)
 
 
 **c. Review the configuration, and select _Install Cluster_.**
 
-![image](https://user-images.githubusercontent.com/48925593/134448841-69c26016-b744-43a7-bc5c-562b10995da0.png)
+ ![image](https://user-images.githubusercontent.com/48925593/134448841-69c26016-b744-43a7-bc5c-562b10995da0.png)
 
 
 **d. Monitor the installation progress.**
 
-![image](https://user-images.githubusercontent.com/48925593/134449913-6125dac7-b55b-412a-b03b-3be148ab1126.png)
+ ![image](https://user-images.githubusercontent.com/48925593/134449913-6125dac7-b55b-412a-b03b-3be148ab1126.png)
 
 **e. Installation Complete.**
 
-![image](https://user-images.githubusercontent.com/48925593/134454160-8d191627-4c61-44db-8109-7ff44ae6ff46.png)
-![image](https://user-images.githubusercontent.com/48925593/134454205-e1a78b80-bde5-4fe4-99e7-8ef2c42f13ae.png)
+ ![image](https://user-images.githubusercontent.com/48925593/134454160-8d191627-4c61-44db-8109-7ff44ae6ff46.png)
+ ![image](https://user-images.githubusercontent.com/48925593/134454205-e1a78b80-bde5-4fe4-99e7-8ef2c42f13ae.png)
 
 
  
