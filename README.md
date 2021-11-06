@@ -10,19 +10,19 @@ Single-Node OpenShift requires the following minimum host resources:
 - Memory: 32GB of RAM
 - Storage: 120 GB 
 
-AWS Wavelength supports the following instances types for edge workloads that meet the minimum SNO resource requirements:  
-- `r5.2xlarge` for applications that need cost effective general purpose compute.
-- `g4dn.2xlarge` for applications that need GPUs, such as game streaming and machine learning (ML) inference at the edge.
-
 r5.2xlarge
 - CPU: 8 vCPUs
 - Memory: 64GB
 
 g4dn.2xlarge
-- GCPU: 1 NVIDIA T4 Tensor Core GPU
+- GPU: 1 NVIDIA T4 Tensor Core GPU
 - CPU: 8 vCPUs
 - Memory: 32GB
 - Storage: 225GB NVMe SSD
+
+AWS Wavelength supports the following instances types for edge workloads that meet the minimum SNO resource requirements:  
+- `r5.2xlarge` for applications that need cost effective general purpose compute.
+- `g4dn.2xlarge` for applications that need GPUs, such as game streaming and machine learning (ML) inference at the edge.
 
 You'll also need to install the AWS CLI. https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 
