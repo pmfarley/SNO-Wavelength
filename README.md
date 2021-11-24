@@ -345,7 +345,7 @@ menuentry "Discovery Image RHCOS" {
         set root='(hd0,2)'
         set iso="/var/tmp/discovery-image.iso"
         loopback loop ${iso}
-        linux (loop)/images/pxeboot/vmlinuz boot=images iso-scan/filename=${iso} persistent noeject noprompt ignition.firstboot ignition.platform.id=metal coreos.live.rootfs_url='https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.9/4.9.0/rhcos-live-rootfs.x86_64.img'
+        linux (loop)/images/pxeboot/vmlinuz boot=images iso-scan/filename=${iso} persistent noeject noprompt ignition.firstboot ignition.platform.id=metal coreos.live.rootfs_url='https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.9/4.9.4/rhcos-live-rootfs.x86_64.img'
         initrd (loop)/images/pxeboot/initrd.img (loop)/images/ignition.img (loop)/images/assisted_installer_custom.img
         }
 ```
@@ -358,7 +358,7 @@ Execute these commands to generate and save the new menuentry.
 ```bash
 sudo grub2-set-default 'Discovery Image RHCOS'
 sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-reboot
+sudo reboot
 ```
 
 
