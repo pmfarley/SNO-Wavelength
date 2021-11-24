@@ -365,26 +365,26 @@ sudo reboot
 ## **STEP 8. RETURN TO THE ASSISTED INSTALLER TO FINISH THE INSTALLATION:**
 
 Return to the OpenShift Assisted Installer.
-
- ![image](https://user-images.githubusercontent.com/48925593/140576648-b57c44ee-ada3-457f-88bd-19b64cc34b43.png)
  
+ **a. You should see the SNO instance displayed in the list of discovered servers. 
+      From the _Host discovery_ menu, once the SNO instance is discovered, click 'Next'.**
  
- **a. You should see the SNO instance displayed in the list of discovered servers.**
-
- **b. From the _Host discovery_ menu, once the SNO instance is discovered, click 'Next'.**
- 
-  ![image](https://user-images.githubusercontent.com/48925593/140581518-8de32ed2-815d-492d-90ae-996c9926d0f4.png)
+  ![image](https://user-images.githubusercontent.com/48925593/143311949-ce94272a-0548-4b4e-9be2-9a76503617c2.png)
 
  
- 
- **c. From the _Networking_ menu, select the discovered `network subnet`, and click on _Next_ to proceed.**
+ **b. From the _Networking_ menu, select the discovered `network subnet`, and click on _Next_ to proceed.**
 
- ![image](https://user-images.githubusercontent.com/48925593/134448546-c1e05bae-cc25-4aca-abc3-c495a0b33b63.png)
+![image](https://user-images.githubusercontent.com/48925593/143313096-6ed9e605-50ee-43e1-8e05-9fd260c09d93.png)
+
+
+![image](https://user-images.githubusercontent.com/48925593/143312805-d65410b7-0263-48bb-bbe1-56e885c99276.png)
 
 
 **c. Review the configuration, and select _Install Cluster_.**
 
- ![image](https://user-images.githubusercontent.com/48925593/134448841-69c26016-b744-43a7-bc5c-562b10995da0.png)
+ ![image](https://user-images.githubusercontent.com/48925593/143313250-269de01d-5827-4001-bea4-69dde1982d2f.png)
+
+
 
 
 **d. Monitor the installation progress.**
