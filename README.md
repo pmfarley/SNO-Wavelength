@@ -28,33 +28,48 @@ You'll also need to install the AWS CLI. https://docs.aws.amazon.com/cli/latest/
 
 ![image](https://user-images.githubusercontent.com/48925593/140574901-4d6f8c39-6ffe-4e6a-87a5-5a9de79b6ab4.png)
 
+If you've cloned or downloaded this repo, you can edit the variables in the provided script:  `deploySNOonAWS.sh`
+
+Then to run the script with the following command:
+ ```bash
+ . ./deploySNOonAWS.sh
+ ```
+
+This script will execute the commands for Step 1 thru Step 5 below.  
+
 
 ## **STEP 1. CREATE THE VPC AND ASSOCIATED RESOURCES:**
 
 **a. In order to get started, you need to first set some environment variables.**
 
-  Change to the directory that contains the installation program and run the following command:
+  Run the following commands:
 
   ```bash
   export REGION="us-east-1"
-  export WL_ZONE="us-east-1-wl1-was-wlz-1"
+  export WL_ZONE="us-east-1-wl1-was-wlz-1"          #Boston Wavelength Zone
   export NBG="us-east-1-wl1-was-wlz-1"
-  export SNO_IMAGE_ID="ami-0c72f473496a7b1c2"       #RHEL CoreOS 4.9
+  export SNO_IMAGE_ID="ami-0ae9702360611e715"       #RHEL 8.4
   export BASTION_IMAGE_ID="ami-0ae9702360611e715"   #RHEL 8.4
+  export SNO_INSTANCE_TYPE=r5.2xlarge 
+  export BASTION_INSTANCE_TYPE=t3.medium 
   export KEY_NAME=pmf-key
    ```
-Other variables created/used:
+Other variables that are created/used:
   ```bash
   $VPC_ID
   $IGW_ID
   $CAGW_ID
+  $BASTION_SG_ID
   $SNO_SG_ID
   $WL_SUBNET_ID
   $WL_RT_ID
   $BASTION_SUBNET_ID
   $BASTION_RT_ID
-  $SNO_ENI_ID
   $SNO_CIP_ALLOC_ID
+  $SNO_ENI_ID
+  $SNO_CIP_ASSOC_ID
+  $BASTION_INSTANCE_ID
+  $SNO_INSTANCE_ID
    ```
 
 **b. Use the AWS CLI to create the VPC.**
@@ -77,7 +92,7 @@ aws ec2 --region $REGION  attach-internet-gateway \
  --vpc-id $VPC_ID  --internet-gateway-id $IGW_ID
 ```
 
-**d. Add the carrier gateway.**
+**d. Create the carrier gateway.**
 
 ```bash
 export CAGW_ID=$(aws ec2 --region $REGION \
@@ -149,7 +164,7 @@ export WL_SUBNET_ID=$(aws ec2 --region $REGION \
 --query 'Subnet.SubnetId') && echo '\nWL_SUBNET_ID='$WL_SUBNET_ID
 ```
 
-**b. Create the route table for the Wavelength subnet.**
+**b. Create the route table for the Wavelength Zone subnet.**
 
 ```bash
 export WL_RT_ID=$(aws ec2 --region $REGION \
@@ -157,7 +172,7 @@ export WL_RT_ID=$(aws ec2 --region $REGION \
 --query 'RouteTable.RouteTableId') && echo '\nWL_RT_ID='$WL_RT_ID
 ```
 
-**c. Associate the route table with the Wavelength subnet and a route to route traffic to the carrier gateway which in turns routes traffic to the carrier mobile network.**
+**c. Associate the route table with the Wavelength Zone subnet and a route to direct traffic to the carrier gateway which in turns routes traffic to the carrier mobile network.**
 
 ```bash
 aws ec2 --region $REGION  associate-route-table \
@@ -175,21 +190,21 @@ export BASTION_SUBNET_ID=$(aws ec2 --region $REGION \
 --query 'Subnet.SubnetId') && echo '\nBASTION_SUBNET_ID='$BASTION_SUBNET_ID
 ```
 
-**e. Deploy the bastion subnet route table and a route to direct traffic to the internet gateway.**
+**e. Create the bastion subnet route table and a route to direct traffic to the internet gateway.**
 
 ```bash
 export BASTION_RT_ID=$(aws ec2 --region $REGION \
 --output text create-route-table --vpc-id $VPC_ID \
 --query 'RouteTable.RouteTableId') && echo '\nBASTION_RT_ID='$BASTION_RT_ID 
 
-aws ec2 --region $REGION  create-route --route-table-id $BASTION_RT_ID \
---destination-cidr-block 0.0.0.0/0 --gateway-id $IGW_ID 
-
 aws ec2 --region $REGION  associate-route-table --subnet-id $BASTION_SUBNET_ID \
 --route-table-id $BASTION_RT_ID
+
+aws ec2 --region $REGION  create-route --route-table-id $BASTION_RT_ID \
+--destination-cidr-block 0.0.0.0/0 --gateway-id $IGW_ID
 ```
 
-**f. Modify the bastion’s subnet to assign public IPs by default.**
+**f. Modify the bastion subnet to assign public IPs by default.**
 
 ```bash
 aws ec2 --region $REGION  modify-subnet-attribute \
@@ -220,8 +235,10 @@ export SNO_ENI_ID=$(aws ec2 --region $REGION \
 **c. Associate the carrier IP with the ENIs.**
 
 ```bash
-aws ec2 --region $REGION associate-address  --allocation-id $SNO_CIP_ALLOC_ID \
---network-interface-id $SNO_ENI_ID
+export SNO_CIP_ASSOC_ID=$(aws ec2 --region $REGION associate-address  \
+--allocation-id $SNO_CIP_ALLOC_ID --network-interface-id $SNO_ENI_ID \
+--output text --query 'AssociationId') \
+&& echo '\nSNO_CIP_ASSOC_ID='$SNO_CIP_ASSOC_ID
 ```
 
 ## **STEP 5. DEPLOY THE SNO AND BASTION INSTANCEs:**
@@ -232,11 +249,12 @@ The SNO server is a g4dn.2xlarge instance and the Bootstrap server is a t3.mediu
 **a. Deploy the SNO instance.**
 
 ```bash
-aws ec2 --region $REGION  run-instances  --instance-type g4dn.2xlarge \
+export SNO_INSTANCE_ID=$(aws ec2 --region $REGION  run-instances  --instance-type $SNO_INSTANCE_TYPE \
 --network-interface '[{"DeviceIndex":0,"NetworkInterfaceId":"'$SNO_ENI_ID'"}]' \
---image-id $BASTION_IMAGE_ID --key-name $KEY_NAME \
+--image-id $BASTION_IMAGE_ID --key-name $KEY_NAME --output text --query Instances[*].[InstanceId] \
 --block-device-mappings '[{"DeviceName": "/dev/sda1", "Ebs":{"VolumeSize": 120, "VolumeType": "gp2"}}]' \
---tag-specifications 'ResourceType=instance,Tags=[{Key="kubernetes.io/cluster/wavelength-sno",Value=shared}]'
+--tag-specifications 'ResourceType=instance,Tags=[{Key="kubernetes.io/cluster/wavelength-sno",Value=shared}]') \
+&& echo '\nSNO_INSTANCE_ID='$SNO_INSTANCE_ID
 ```
 
 Remember that the carrier gateway in a Wavelength Zone only allows ingress from the carrier’s 5G network. 
@@ -246,9 +264,10 @@ The Bastion host is a t3.medium instance; running RHEL 8.4 AMI.
 **b. Deploy the BASTION instance.**
 
 ```bash
-aws ec2 --region $REGION run-instances  --instance-type t3.medium \
---associate-public-ip-address --subnet-id $BASTION_SUBNET_ID \
---image-id $BASTION_IMAGE_ID --security-group-ids $BASTION_SG_ID --key-name $KEY_NAME
+export BASTION_INSTANCE_ID=$(aws ec2 --region $REGION run-instances  --instance-type $BASTION_INSTANCE_TYPE \
+--associate-public-ip-address --subnet-id $BASTION_SUBNET_ID --output text --query Instances[*].[InstanceId] \
+--image-id $BASTION_IMAGE_ID --security-group-ids $BASTION_SG_ID --key-name $KEY_NAME) \
+&& echo '\nBASTION_INSTANCE_ID='$BASTION_INSTANCE_ID
 ```
 
 ## **STEP 6. GENERATE DISCOVERY ISO FROM THE ASSISTED INSTALLER:**
