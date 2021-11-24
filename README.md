@@ -241,27 +241,13 @@ export SNO_CIP_ASSOC_ID=$(aws ec2 --region $REGION associate-address  \
 && echo '\nSNO_CIP_ASSOC_ID='$SNO_CIP_ASSOC_ID
 ```
 
-## **STEP 5. DEPLOY THE SNO AND BASTION INSTANCEs:**
+## **STEP 5. DEPLOY THE SNO AND BASTION INSTANCES:**
 
-With the VPC and underlying networking and security deployed, you can now move on to deploying your SNO instance. 
-The SNO server is a g4dn.2xlarge instance and the Bootstrap server is a t3.medium instance; both running RHEL 8.4 AMI. 
+With the VPC and underlying networking and security deployed, you can now move on to deploying your bastion and SNO instances. 
 
-**a. Deploy the SNO instance.**
+The bastion server is a t3.medium instance; running RHEL 8.4 AMI. 
 
-```bash
-export SNO_INSTANCE_ID=$(aws ec2 --region $REGION  run-instances  --instance-type $SNO_INSTANCE_TYPE \
---network-interface '[{"DeviceIndex":0,"NetworkInterfaceId":"'$SNO_ENI_ID'"}]' \
---image-id $BASTION_IMAGE_ID --key-name $KEY_NAME --output text --query Instances[*].[InstanceId] \
---block-device-mappings '[{"DeviceName": "/dev/sda1", "Ebs":{"VolumeSize": 120, "VolumeType": "gp2"}}]' \
---tag-specifications 'ResourceType=instance,Tags=[{Key="kubernetes.io/cluster/wavelength-sno",Value=shared}]') \
-&& echo '\nSNO_INSTANCE_ID='$SNO_INSTANCE_ID
-```
-
-Remember that the carrier gateway in a Wavelength Zone only allows ingress from the carrier’s 5G network. 
-This means that in order to SSH into the SNO server, you'll need to first SSH into the Bastion host, and then from there, SSH into your Wavelength SNO instance.
-The Bastion host is a t3.medium instance; running RHEL 8.4 AMI. 
-
-**b. Deploy the BASTION instance.**
+**a. Deploy the BASTION instance.**
 
 ```bash
 export BASTION_INSTANCE_ID=$(aws ec2 --region $REGION run-instances  --instance-type $BASTION_INSTANCE_TYPE \
@@ -269,6 +255,25 @@ export BASTION_INSTANCE_ID=$(aws ec2 --region $REGION run-instances  --instance-
 --image-id $BASTION_IMAGE_ID --security-group-ids $BASTION_SG_ID --key-name $KEY_NAME) \
 && echo '\nBASTION_INSTANCE_ID='$BASTION_INSTANCE_ID
 ```
+
+**b. Deploy the SNO instance.**
+
+```bash
+export SNO_INSTANCE_ID=$(aws ec2 --region $REGION  run-instances  --instance-type $SNO_INSTANCE_TYPE \
+--network-interface '[{"DeviceIndex":0,"NetworkInterfaceId":"'$SNO_ENI_ID'"}]' \
+--image-id $SNO_IMAGE_ID --key-name $KEY_NAME --output text --query Instances[*].[InstanceId] \
+--block-device-mappings '[{"DeviceName": "/dev/sda1", "Ebs":{"VolumeSize": 120, "VolumeType": "gp2"}}]' \
+--tag-specifications 'ResourceType=instance,Tags=[{Key="kubernetes.io/cluster/wavelength-sno",Value=shared}]') \
+&& echo '\nSNO_INSTANCE_ID='$SNO_INSTANCE_ID
+```
+
+Remember that the carrier gateway in a Wavelength Zone only allows ingress from the carrier’s 5G network. 
+This means that in order to SSH into the SNO server, you'll need to first SSH into the Bastion host, and then from there, SSH into your Wavelength SNO instance.
+
+The SNO server is a `r5.2xlarge` or `g4dn.2xlarge` instance; running RHEL 8.4 AMI.
+
+
+
 
 ## **STEP 6. GENERATE DISCOVERY ISO FROM THE ASSISTED INSTALLER:**
 
