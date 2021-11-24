@@ -280,14 +280,15 @@ You will be prompted for your Red Hat ID and password to login.
  ![image](https://user-images.githubusercontent.com/48925593/140575947-b4f8e666-637c-451f-b797-d30feff712d3.png)
 
 
-**b. Enter the cluster name, and base domain; select 'Install single node OpenShift (SNO)' and 'OpenShift 4.9.0', and click 'Next'.**
+**b. Enter the cluster name, and the base domain; then select 'Install single node OpenShift (SNO)' and 'OpenShift 4.9.4', and click 'Next'.**
 
- ![image](https://user-images.githubusercontent.com/48925593/140576426-d4100e81-9726-402b-b264-ae1be8706088.png)
+ ![image](https://user-images.githubusercontent.com/48925593/143304033-01bd05b8-71ad-4a9d-94e5-e9ee4b38e729.png)
+
 
 
 **c. Select 'Generate Discovery ISO'.**
 
- ![image](https://user-images.githubusercontent.com/48925593/140576648-b57c44ee-ada3-457f-88bd-19b64cc34b43.png)
+ ![image](https://user-images.githubusercontent.com/48925593/143304631-df063601-d2a5-49d7-af05-db699fd9e01e.png)
 
 
 **d. Select 'Minimal Image File' and 'Generate Discovery ISO'.**
@@ -299,7 +300,8 @@ You will be prompted for your Red Hat ID and password to login.
 
 This will be used in a later step from the SNO instance.
 
- ![image](https://user-images.githubusercontent.com/48925593/140577575-eb0d76e1-6a4d-43a5-8ee8-56c4d4a4e9b6.png)
+ ![image](https://user-images.githubusercontent.com/48925593/143304940-fe1e3bbc-31c5-4127-8a09-f6885be762e0.png)
+
 
 
 **e. Click 'Close' to return to the previous screen.**
@@ -307,7 +309,7 @@ This will be used in a later step from the SNO instance.
 
 ## **STEP 7. BOOT THE SNO INSTANCE FROM THE DISCOVERY ISO:**
 
-AWS EC2 instances are NOT able to boot directly from an ISO image. So, we'll use the following steps to download the Discovery ISO image to the instance.
+AWS EC2 instances are NOT able to directly boot from an ISO image. So, we'll use the following steps to download the Discovery ISO image to the instance.
 Then we'll add an entry to the grub configuration to allow it to boot boot from the image. 
 
 
@@ -320,7 +322,7 @@ ssh -i <your-sshkeyfile.pem> ec2user@<ip address>
 
 **b. Install wget and download the Discovery Image ISO.**
 
-You'll need the download url provided previously in step 6e.
+You'll need the download url provided previously in step 6e.  You'll need to edit the path and filename before you run the command to download the ISO file.  Notice that the file is being downloaded as `discovery-image.iso` into the `/var/tmp/` folder. 
 
 ```bash
 sudo yum install wget -y
