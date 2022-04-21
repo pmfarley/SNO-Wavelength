@@ -315,7 +315,7 @@ This will be used in a later step from the SNO instance.
 ## **STEP 7. BOOT THE SNO INSTANCE FROM THE DISCOVERY ISO:**
 
 AWS EC2 instances are NOT able to directly boot from an ISO image. So, we'll use the following steps to download the Discovery ISO image to the instance.
-Then we'll add an entry to the grub configuration to allow it to boot boot from the image. 
+Then we'll add an entry to the grub configuration to allow it to boot from the image. 
 
 
 **a. SSH into the SNO instance.**
